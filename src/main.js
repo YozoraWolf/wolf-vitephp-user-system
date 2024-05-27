@@ -1,3 +1,1 @@
-import "../global.scss";
-
-console.log("test");
+import "../global.scss"; // Import global styles

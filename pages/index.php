@@ -10,6 +10,9 @@
 	</head>
 	<body>
 		<?="Render some text with PHP!";?>
+		 <?php 
+		 	require_once 'incl/db.incl.php';
+		 ?>
          <h1>Some text</h1>
 
 	</body>
