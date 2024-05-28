@@ -38,7 +38,7 @@ try {
     $dsn = "mysql:host=$host";
     $pdo = new PDO($dsn, $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo "Connected successfully! <br>";
+    //echo "Connected successfully! <br>";
 } catch (PDOException $e) {
     echo "Init Connection failed: ' . {$e->getMessage()}.";
     exit(0);
@@ -50,9 +50,9 @@ $userDBexists = checkDatabaseExists($dbname, $pdo);
 if(!$userDBexists) {
     $query = "CREATE DATABASE $dbname";
     $pdo->exec($query);
-    echo "Database $dbname created successfully! <br>";
+    //echo "Database $dbname created successfully! <br>";
 } else {
-    echo "Database $dbname already exists! <br>";
+    //var_dump("Database $dbname already exists! <br>");
 }
 
 ?>

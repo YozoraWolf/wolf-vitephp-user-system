@@ -9,6 +9,20 @@
 
 This is a simple user signup/login system implemented in PHP and MySQL. It is mostly a practice project to me.
 
+## Considerations
+
+- Make sure you have MySQL server installed. Backend will try to connect to it when starting.
+- Confirm you have `composer` installed.
+- Make a simple .env file with your own DB vars as follows:
+
+```
+DB_HOST=localhost
+DB_NAME=usersys
+DB_TABLE=users
+DB_USER=root
+DB_PASS=dbpwdhere # (if any)
+```
+
 ## Features
 
 - User registration with email and password

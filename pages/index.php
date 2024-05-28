@@ -1,4 +1,3 @@
-<!-- index.php -->
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -9,11 +8,9 @@
     	<script type="module" src="/src/main.js"></script>
 	</head>
 	<body>
-		<?="Render some text with PHP!";?>
 		 <?php 
 		 	require_once 'incl/db.incl.php';
 		 ?>
-         <h1>Some text</h1>
 
 	</body>
 </html>
