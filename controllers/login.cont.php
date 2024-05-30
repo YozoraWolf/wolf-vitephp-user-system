@@ -1,5 +1,21 @@
 <?php
-require_once 'incl/db.incl.php';
+
+class LoginErrors {
+    const NONE = 'none';
+    const EMP = 'empty';
+    const EMAIL = 'email';
+    const PASSWORD_INVALID = 'password_invalid';
+}
+
+$login_msgs = [
+    LoginErrors::NONE => 'none',
+    LoginErrors::EMP => 'Please fill in all fields',
+    LoginErrors::EMAIL => 'Invalid e-mail',
+    LoginErrors::PASSWORD_INVALID => 'Invalid e-mail or password'
+];
+
+include_once '../models/signup.model.php';
+require_once '../incl/db.incl.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors = [];
@@ -8,77 +24,76 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Validate the fields 
         $fields_valid = are_fields_valid($data);
-        if ($fields_valid !== LoginErrors::none) {
+        if ($fields_valid !== LoginErrors::NONE) {
             $errors[] = $login_msgs[$fields_valid];
         }
 
         // Attempt to login the user
         $login = login_user($data, $pdo);
-        if ($login !== LoginErrors::none) {
+        if ($login !== LoginErrors::NONE) {
             $errors[] = $login_msgs[$login];
         }
 
-        require_once 'config/config.php';
+        var_dump($errors);
+
+        require_once '../config/config.php';
 
         if (!empty($errors)) {
             $_SESSION['errors'] = $errors;
+            print_r($_SESSION); // Debugging
             header('Location: /login.php');
             exit();
         }
 
         // Successful login
-        header('Location: /dashboard.php'); // Redirect to a different page upon successful login
-        exit();
+        header('Location: /index.php'); // Todo: Create a Dashboard or something ? lol
     } catch (Exception $e) {
-
+        $_SESSION['errors'] = ['An error occurred. Please try again later.'];
         header('Location: /login.php');
         exit();
     }
 } else {
     header('Location: /login.php');
-    exit();
 }
 
-enum LoginErrors {
-    case none;
-    case empty;
-    case email;
-    case password_invalid;
-}
 
-$login_msgs = [
-    LoginErrors::none => 'none',
-    LoginErrors::empty => 'Please fill in all fields',
-    LoginErrors::email => 'Invalid e-mail',
-    LoginErrors::password_invalid => 'Invalid e-mail or password'
-];
 
-function are_fields_valid(FormData $data) {
+function are_fields_valid($data) {
     $email = htmlspecialchars($data->email);
     $password = htmlspecialchars($data->password);
     if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-        return LoginErrors::email;
+        return LoginErrors::EMAIL;
     }
     if (empty($email) || empty($password)) {
-        return LoginErrors::empty;
+        return LoginErrors::EMP;
     }
-    return LoginErrors::none;
+    return LoginErrors::NONE;
 }
 
-function login_user(FormData $data, object $pdo) {
+function login_user($data, $pdo) {
+    global $dbtable;
+
     $email = htmlspecialchars($data->email);
     $password = htmlspecialchars($data->password);
 
-    $query = "SELECT * FROM users WHERE email = :email";
+    if(!checkTableExists($dbtable, $pdo)) {
+        createTable($dbtable, $pdo);
+    }
+
+    $query = "SELECT * FROM $dbtable WHERE email = :email";
     $stmt = $pdo->prepare($query);
     $stmt->bindParam(':email', $email);
     $stmt->execute();
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($result && password_verify($password, $result['password'])) {
-        return LoginErrors::none;
+    if(!$result) {
+        return LoginErrors::EMAIL;
     }
 
-    return LoginErrors::password_invalid;
+    if ($result && password_verify($password, $result['password'])) {
+        return LoginErrors::NONE;
+    }
+
+    return LoginErrors::PASSWORD_INVALID;
 }
 ?>

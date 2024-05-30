@@ -1,12 +1,11 @@
 <?php
 
 require_once 'incl/db.incl.php';
-
-enum SignupErrors {
-    case None;
-    case empty;
-    case email;
-    case password_verify;
+class SignupErrors {
+    const NONE = 'none';
+    const EMP = 'empty';
+    const EMAIL = 'email';
+    const PASSWORD_VERIFY = 'password_invalid';
 }
 
 function does_email_exist(string $email, object $pdo) {
@@ -23,15 +22,15 @@ function are_fields_valid(FormData $data) {
     $password = $data->password;
     $password_repeat = $data->password_repeat;
     if(filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-        return SignupErrors::email;
+        return SignupErrors::EMAIL;
     }
     if(empty($username) || empty($email) || empty($password) || empty($password_repeat)) {
-        return SignupErrors::empty;
+        return SignupErrors::EMP;
     }
     if($password !== $password_repeat) {
-        return SignupErrors::password_verify;
+        return SignupErrors::PASSWORD_VERIFY;
     }
-    return SignupErrors::None;
+    return SignupErrors::NONE;
 }
 
 function create_user(FormData $data, object $pdo) {
@@ -54,11 +53,11 @@ if(isset($_POST['submit'])) {
 
         $data = new FormData($_POST['username'], $_POST['email'], $_POST['password'], $_POST['password_repeat']);
         $fields_valid = are_fields_valid($data);
-        if($fields_valid !== SignupErrors::None) {
+        if($fields_valid !== SignupErrors::NONE) {
             $errors = $fields_valid;
         }
         if(does_email_exist($data->email, $pdo)) {
-            $errors = SignupErrors::email;
+            $errors = SignupErrors::EMAIL;
         }
         create_user($data, $pdo);
     } catch (Exception $e) {

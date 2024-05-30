@@ -1,1 +1,0 @@
-import "../global.scss"; // Import global styles
