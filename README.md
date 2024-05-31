@@ -12,16 +12,6 @@ This is a simple user signup/login system implemented in PHP and MySQL. It is mo
 ## Considerations
 
 - Make sure you have MySQL server installed. Backend will try to connect to it when starting.
-- Confirm you have `composer` installed.
-- Make a simple .env file with your own DB vars as follows:
-
-```
-DB_HOST=localhost
-DB_NAME=usersys
-DB_TABLE=users
-DB_USER=root
-DB_PASS=dbpwdhere # (if any)
-```
 
 ## Features
 
@@ -33,12 +23,11 @@ DB_PASS=dbpwdhere # (if any)
 ## Installation
 
 1. Clone the repository: `git clone https://github.com/YozoraWolf/wolf-vitephp-user-system`
-2. Run `composer install`
-3. Run `npm run dev`
+2. Run `php -S localhost:8001` (It can be any port you want)
 
 ## Usage
 
-1. Open your web browser and navigate to `http://localhost:3005/pages/`
+1. Open your web browser and navigate to `http://localhost:8001/login.php`
 2. Register a new user account
 3. Login with your credentials
 
