@@ -54,7 +54,18 @@ body {
 
 }
 
-form > input {
+.form-inner  > .error {
+    color: red;
+    font-size: 0.8rem;
+    margin: 5px;
+}
 
+.form-inner > .success {
+    color: green;
+    font-size: 0.8rem;
+    margin: 5px;
+}
+
+form > input {
     margin: 5px;
 }

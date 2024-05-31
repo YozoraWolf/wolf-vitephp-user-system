@@ -9,11 +9,29 @@ class LoginErrors {
 }
 
 $login_msgs = [
-    LoginErrors::NONE => 'none',
+    LoginErrors::NONE => '',
     LoginErrors::EMP => 'Please fill in all fields',
     LoginErrors::EMAIL_INVALID => 'Invalid e-mail format',
     LoginErrors::EMAIL_NOT_FOUND => 'E-mail not found in DB',
     LoginErrors::PASSWORD_INVALID => 'Invalid e-mail or password'
+];
+
+
+class SignupErrors {
+    const NONE = 'none';
+    const EMP = 'empty';
+    const EMAIL_INVALID = 'email_invalid';
+    const EMAIL_EXISTS = 'email_exists';
+    const PASSWORD_MATCH_FAIL = 'password_match_fail';
+}
+
+
+$signup_msgs = [
+    SignupErrors::NONE => '',
+    SignupErrors::EMP => 'Please fill in all fields',
+    SignupErrors::EMAIL_INVALID => 'Invalid e-mail format',
+    SignupErrors::EMAIL_EXISTS => 'E-mail already exists',
+    SignupErrors::PASSWORD_MATCH_FAIL => 'Passwords do not match'
 ];
 
 class FormData {

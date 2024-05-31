@@ -1,15 +1,17 @@
 <div class="form-cont">
-
     <div class="form-inner">
         <?php
 
         require_once 'config/config.php';
-        require_once 'models/form.model.php';
 
         if (isset($_SESSION['errors'])) {
             foreach ($_SESSION['errors'] as $error) {
                 echo "<div class='error'>$error</div>";
             }
+        }
+
+        if (isset($_SESSION['signup_success'])) {
+            echo "<div class='success'>User successfully created, please now login</div>";
         }
         ?>
 

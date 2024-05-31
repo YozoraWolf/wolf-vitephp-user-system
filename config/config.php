@@ -18,9 +18,23 @@ session_set_cookie_params(
     true
 );
 
-if (session_status() === PHP_SESSION_NONE) {
+if (session_status() !== PHP_SESSION_NONE) {
     session_start();
+} else {
+    session_start();
+    // Manually set the SameSite attribute
+    $cookieParams = session_get_cookie_params();
+    $cookie = session_name() . '=' . session_id()
+        . '; expires=' . gmdate('D, d-M-Y H:i:s T', time() + $cookieParams['lifetime'])
+        . '; path=' . $cookieParams['path']
+        . '; domain=localhost'
+        . ($cookieParams['secure'] ? '; secure' : '')
+        . '; httponly; samesite=Strict';
+
+    header('Set-Cookie: ' . $cookie);
 }
+
+
 
 // Set the session timeout to 30 mins
 $sessionTimeout = 30 * 60; // 30 mins
@@ -30,11 +44,11 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 
     // Session has expired, destroy it
     session_unset();
     session_destroy();
-    // Optionally, you can start a new session here if needed
+
+    // Optionally, start a new session
     session_start();
     session_regenerate_id(true);
 }
 
 // Update last activity time to current
 $_SESSION['last_activity'] = time();
-?>
