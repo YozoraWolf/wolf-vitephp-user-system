@@ -4,12 +4,14 @@
         <?php
         require_once 'config/config.php';
 
+        // Display error messages if there are any
         if (isset($_SESSION['errors'])) {
             foreach ($_SESSION['errors'] as $error) {
                 echo "<div class='error'>$error</div>";
             }
         }
 
+        // Display success message if user was successfully created (though probably not seen due to redirect)
         if (isset($_SESSION['signup_success'])) {
             echo "<div class='success'>User successfully created, please now login</div>";
         }

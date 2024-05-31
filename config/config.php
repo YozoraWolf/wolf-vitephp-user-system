@@ -18,9 +18,7 @@ session_set_cookie_params(
     true
 );
 
-if (session_status() !== PHP_SESSION_NONE) {
-    session_start();
-} else {
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
     // Manually set the SameSite attribute
     $cookieParams = session_get_cookie_params();

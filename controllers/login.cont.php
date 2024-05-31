@@ -14,17 +14,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = $login_msgs[$fields_valid];
         }
 
+
+        require_once '../config/config.php';
+
         // Attempt to login the user
         if (!empty($data->username)) {
             $login = login_user($data, $pdo);
-            if ($login !== LoginErrors::NONE) {
-                $errors[] = $login_msgs[$login];
+            if ($login->error === null) {
+                $_SESSION['user'] = $login->user;
+            } else {
+                $errors[] = $login_msgs[$login->error];
             }
         }
-
-        var_dump($errors);
-
-        require_once '../config/config.php';
 
         if (!empty($errors)) {
             $_SESSION['errors'] = $errors;
@@ -34,8 +35,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         }
 
+        // Clear any errrors
+        unset($_SESSION['errors']);
+
+
         // Successful login
-        header('Location: /index.php'); // Todo: Create a Dashboard or something ? lol
+        header('Location: /dashboard.php'); // Todo: Create a Dashboard or something ? lol
+        exit();
     } catch (Exception $e) {
         $_SESSION['errors'] = ['An error occurred. Please try again later.'];
         header('Location: /login.php');
@@ -62,6 +68,8 @@ function are_fields_valid($data) {
 function login_user($data, $pdo) {
     global $dbtable;
 
+    $res = null;
+
     $email = htmlspecialchars($data->email);
     $password = htmlspecialchars($data->password);
 
@@ -76,12 +84,13 @@ function login_user($data, $pdo) {
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$result) {
-        return LoginErrors::EMAIL_NOT_FOUND;
+        return new Result(null, LoginErrors::EMAIL_NOT_FOUND);
     }
 
-    if ($result && password_verify($password, $result['password'])) {
-        return LoginErrors::NONE;
+    if (password_verify($password, $result['password'])) {
+        return new Result(new User($result['username'], $result['email']), null);
+    } else { 
+        $res = new Result(null, LoginErrors::PASSWORD_INVALID);
+        return $res;
     }
-
-    return LoginErrors::PASSWORD_INVALID;
 }

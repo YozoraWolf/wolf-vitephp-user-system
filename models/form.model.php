@@ -6,6 +6,7 @@ class LoginErrors {
     const EMAIL_INVALID = 'email_invalid';
     const EMAIL_NOT_FOUND = 'email_not_found';
     const PASSWORD_INVALID = 'password_invalid';
+    const LOGIN_INVALID = 'login_invalid';
 }
 
 $login_msgs = [
@@ -13,7 +14,8 @@ $login_msgs = [
     LoginErrors::EMP => 'Please fill in all fields',
     LoginErrors::EMAIL_INVALID => 'Invalid e-mail format',
     LoginErrors::EMAIL_NOT_FOUND => 'E-mail not found in DB',
-    LoginErrors::PASSWORD_INVALID => 'Invalid e-mail or password'
+    LoginErrors::PASSWORD_INVALID => 'Invalid e-mail or password',
+    LoginErrors::LOGIN_INVALID => 'Please log-in to access this page.'
 ];
 
 
@@ -51,6 +53,26 @@ class FormData {
     private function sanitize($value) {
         // Reserved in case I need to do additional sanitization
         return htmlspecialchars($value);
+    }
+}
+
+class Result {
+    public $user = null;
+    public $error = null;
+
+    public function __construct($user, $error) {
+        $this->user = $user;
+        $this->error = $error;
+    }
+}
+
+class User {
+    public $username = "";
+    public $email = "";
+    
+    public function __construct($username, $email) {
+        $this->username = $username;
+        $this->email = $email;
     }
 }
 ?>
