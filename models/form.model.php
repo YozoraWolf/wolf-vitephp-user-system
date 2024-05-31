@@ -1,4 +1,21 @@
 <?php
+
+class LoginErrors {
+    const NONE = 'none';
+    const EMP = 'empty';
+    const EMAIL_INVALID = 'email_invalid';
+    const EMAIL_NOT_FOUND = 'email_not_found';
+    const PASSWORD_INVALID = 'password_invalid';
+}
+
+$login_msgs = [
+    LoginErrors::NONE => 'none',
+    LoginErrors::EMP => 'Please fill in all fields',
+    LoginErrors::EMAIL_INVALID => 'Invalid e-mail format',
+    LoginErrors::EMAIL_NOT_FOUND => 'E-mail not found in DB',
+    LoginErrors::PASSWORD_INVALID => 'Invalid e-mail or password'
+];
+
 class FormData {
     public $username = "";
     public $email = "";

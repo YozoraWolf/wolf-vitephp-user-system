@@ -1,27 +1,13 @@
 <?php
 
-class LoginErrors {
-    const NONE = 'none';
-    const EMP = 'empty';
-    const EMAIL = 'email';
-    const PASSWORD_INVALID = 'password_invalid';
-}
-
-$login_msgs = [
-    LoginErrors::NONE => 'none',
-    LoginErrors::EMP => 'Please fill in all fields',
-    LoginErrors::EMAIL => 'Invalid e-mail',
-    LoginErrors::PASSWORD_INVALID => 'Invalid e-mail or password'
-];
-
-include_once '../models/signup.model.php';
+include_once '../models/form.model.php';
 require_once '../incl/db.incl.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors = [];
     try {
         $data = new FormData($_POST['username'], $_POST['username'], $_POST['password'], $_POST['password']);
-        
+
         // Validate the fields 
         $fields_valid = are_fields_valid($data);
         if ($fields_valid !== LoginErrors::NONE) {
@@ -29,9 +15,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Attempt to login the user
-        $login = login_user($data, $pdo);
-        if ($login !== LoginErrors::NONE) {
-            $errors[] = $login_msgs[$login];
+        if (!empty($data->username)) {
+            $login = login_user($data, $pdo);
+            if ($login !== LoginErrors::NONE) {
+                $errors[] = $login_msgs[$login];
+            }
         }
 
         var_dump($errors);
@@ -41,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!empty($errors)) {
             $_SESSION['errors'] = $errors;
             print_r($_SESSION); // Debugging
+            session_write_close();
             header('Location: /login.php');
             exit();
         }
@@ -62,7 +51,7 @@ function are_fields_valid($data) {
     $email = htmlspecialchars($data->email);
     $password = htmlspecialchars($data->password);
     if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-        return LoginErrors::EMAIL;
+        return LoginErrors::EMAIL_INVALID;
     }
     if (empty($email) || empty($password)) {
         return LoginErrors::EMP;
@@ -76,7 +65,7 @@ function login_user($data, $pdo) {
     $email = htmlspecialchars($data->email);
     $password = htmlspecialchars($data->password);
 
-    if(!checkTableExists($dbtable, $pdo)) {
+    if (!checkTableExists($dbtable, $pdo)) {
         createTable($dbtable, $pdo);
     }
 
@@ -86,8 +75,8 @@ function login_user($data, $pdo) {
     $stmt->execute();
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if(!$result) {
-        return LoginErrors::EMAIL;
+    if (!$result) {
+        return LoginErrors::EMAIL_NOT_FOUND;
     }
 
     if ($result && password_verify($password, $result['password'])) {
@@ -96,4 +85,3 @@ function login_user($data, $pdo) {
 
     return LoginErrors::PASSWORD_INVALID;
 }
-?>
